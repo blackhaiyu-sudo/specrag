@@ -1,0 +1,67 @@
+# syntax=docker/dockerfile:1
+
+FROM python:3.11-slim-bookworm AS builder
+
+WORKDIR /build
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip install --no-cache-dir --upgrade pip build wheel setuptools
+
+COPY pyproject.toml ./
+COPY agents ./agents
+COPY config ./config
+COPY database ./database
+COPY routes ./routes
+COPY services ./services
+COPY utils ./utils
+
+RUN find . -type d -name "__pycache__" -prune -exec rm -rf {} + \
+    && python -m build --wheel --outdir /dist
+
+
+FROM python:3.11-slim-bookworm AS runtime
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    FLASK_ENV=production \
+    KB_STORAGE_MODE=enterprise \
+    KB_TENANT_ID=default \
+    UPLOAD_FOLDER=/app/uploads \
+    AUTOGEN_CONFIG_PATH=/app/config/OAI_CONFIG_LIST
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install --no-cache-dir gunicorn
+
+COPY --from=builder /dist/*.whl /tmp/
+RUN python -m pip install --no-cache-dir /tmp/*.whl \
+    && rm -f /tmp/*.whl
+
+COPY app.py ./
+COPY templates ./templates
+COPY static ./static
+COPY docker/entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh \
+    && mkdir -p /app/data /app/runtime /app/uploads /app/outputs/html /app/outputs/raw /app/logs /app/config
+
+EXPOSE 5002
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5002", "--workers", "1", "--threads", "8", "--timeout", "1800", "--access-logfile", "-", "--error-logfile", "-"]

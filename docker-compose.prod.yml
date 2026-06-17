@@ -1,0 +1,35 @@
+name: specrag
+
+services:
+  specrag:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: ${SPECRAG_IMAGE:-specrag:prod}
+    container_name: specrag
+    restart: unless-stopped
+    ports:
+      - "${SPECRAG_PORT:-5002}:5002"
+    environment:
+      FLASK_ENV: production
+      LOG_LEVEL: "${LOG_LEVEL:-INFO}"
+      KB_STORAGE_MODE: "${KB_STORAGE_MODE:-enterprise}"
+      KB_TENANT_ID: "${KB_TENANT_ID:-default}"
+      KB_POSTGRES_DSN: "${KB_POSTGRES_DSN:?KB_POSTGRES_DSN is required for enterprise storage}"
+      KB_QDRANT_URL: "${KB_QDRANT_URL:?KB_QDRANT_URL is required for enterprise storage}"
+      KB_QDRANT_COLLECTION: "${KB_QDRANT_COLLECTION:-specrag_units}"
+      LOG_DIR: /app/logs
+      UPLOAD_FOLDER: /app/uploads
+      AUTOGEN_CONFIG_PATH: /app/config/OAI_CONFIG_LIST
+    volumes:
+      - ${SPECRAG_DATA_DIR:-/data/specrag}/data:/app/data
+      - ${SPECRAG_DATA_DIR:-/data/specrag}/uploads:/app/uploads
+      - ${SPECRAG_DATA_DIR:-/data/specrag}/outputs:/app/outputs
+      - ${SPECRAG_DATA_DIR:-/data/specrag}/logs:/app/logs
+      - ${SPECRAG_DATA_DIR:-/data/specrag}/config:/app/config:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

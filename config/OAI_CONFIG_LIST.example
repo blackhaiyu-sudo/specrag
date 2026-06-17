@@ -1,0 +1,16 @@
+[
+    {
+        "model": "qwen-plus-latest",
+        "api_key": "YOUR_API_KEY_HERE",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "comment": "默认文本模型，不需要标注 model_type"
+    },
+    {
+        "model": "qwen-vl-max",
+        "model_type": "vision",
+        "api_key": "YOUR_API_KEY_HERE",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "comment": "多模态Vision模型，必须标注 model_type: vision"
+    }
+]
+

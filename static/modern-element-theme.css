@@ -1,0 +1,335 @@
+/* Modern Element UI Theme Overrides */
+
+/* 全局变量 */
+:root {
+    --primary-color: #4facfe;
+    --primary-hover: #00f2fe;
+    --success-color: #43e97b;
+    --warning-color: #ff9a5d;
+    --danger-color: #ff6b6b;
+    --info-color: #667eea;
+    --bg-color: #f8f9fa;
+    --text-color: #303133;
+    --border-radius: 8px;
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+}
+
+/* 卡片美化 */
+.el-card {
+    border-radius: var(--border-radius) !important;
+    border: none !important;
+    box-shadow: var(--card-shadow) !important;
+    transition: var(--transition) !important;
+    overflow: hidden;
+}
+
+.el-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+}
+
+.el-card__header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    padding: 16px 20px !important;
+    background: linear-gradient(to right, rgba(79, 172, 254, 0.05), rgba(0, 242, 254, 0.05));
+}
+
+/* 按钮美化 */
+.el-button {
+    border-radius: var(--border-radius) !important;
+    transition: var(--transition) !important;
+    font-weight: 500 !important;
+    border: none !important;
+    padding: 10px 20px !important;
+}
+
+.el-button--primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover)) !important;
+    box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3) !important;
+}
+
+.el-button--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(79, 172, 254, 0.4) !important;
+}
+
+.el-button--success {
+    background: linear-gradient(135deg, var(--success-color), #8eff94) !important;
+    box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3) !important;
+}
+
+.el-button--success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(67, 233, 123, 0.4) !important;
+}
+
+.el-button--danger {
+    background: linear-gradient(135deg, var(--danger-color), #fa709a) !important;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3) !important;
+}
+
+.el-button--danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(255, 107, 107, 0.4) !important;
+}
+
+/* 新增 - 添加点击波纹效果 */
+.el-button::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform .5s, opacity 1s;
+}
+
+.el-button:active::after {
+    transform: scale(0, 0);
+    opacity: .3;
+    transition: 0s;
+}
+
+/* 文本美化 */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600 !important;
+}
+
+/* 表格美化 */
+.el-table {
+    border-radius: var(--border-radius) !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+.el-table th {
+    background-color: rgba(79, 172, 254, 0.05) !important;
+    font-weight: 600 !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+    background-color: rgba(79, 172, 254, 0.02) !important;
+}
+
+.el-table__row:hover > td {
+    background-color: rgba(79, 172, 254, 0.05) !important;
+}
+
+/* 新增 - 表格行点击动画 */
+.el-table__body tr {
+    transition: all 0.2s ease;
+}
+
+.el-table__body tr:active {
+    transform: scale(0.99);
+}
+
+/* 标签美化 */
+.el-tag {
+    border-radius: 20px !important;
+    padding: 0 12px !important;
+    height: 28px !important;
+    line-height: 26px !important;
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 新增 - 标签闪光效果 */
+.el-tag::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 0.3) 50%, 
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.el-tag--success {
+    background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(142, 255, 148, 0.1)) !important;
+    color: var(--success-color) !important;
+}
+
+.el-tag--warning {
+    background: linear-gradient(135deg, rgba(255, 154, 93, 0.1), rgba(255, 183, 93, 0.1)) !important;
+    color: var(--warning-color) !important;
+}
+
+.el-tag--danger {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(250, 112, 154, 0.1)) !important;
+    color: var(--danger-color) !important;
+}
+
+/* 进度条美化 */
+.el-progress-bar__inner {
+    border-radius: 6px !important;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-hover)) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 新增 - 进度条闪光效果 */
+.el-progress-bar__inner::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+    animation: progress-shimmer 2s infinite;
+}
+
+@keyframes progress-shimmer {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(200%); }
+}
+
+.el-progress-bar__outer {
+    border-radius: 6px !important;
+    background-color: rgba(79, 172, 254, 0.1) !important;
+}
+
+/* 分页器美化 */
+.el-pagination .el-pager li {
+    border-radius: 4px !important;
+    font-weight: 500 !important;
+    transition: var(--transition) !important;
+}
+
+.el-pagination .el-pager li.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.el-pagination .btn-prev, .el-pagination .btn-next {
+    border-radius: 4px !important;
+}
+
+/* 输入框美化 */
+.el-input__inner {
+    border-radius: var(--border-radius) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    transition: var(--transition) !important;
+}
+
+.el-input__inner:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2) !important;
+}
+
+/* Tab美化 */
+.el-tabs__item {
+    font-weight: 500 !important;
+}
+
+.el-tabs__active-bar {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-hover)) !important;
+    height: 3px !important;
+    border-radius: 3px !important;
+}
+
+/* 对话框美化 */
+.el-dialog {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+.el-dialog__header {
+    background: linear-gradient(to right, rgba(79, 172, 254, 0.05), rgba(0, 242, 254, 0.05));
+    padding: 20px !important;
+}
+
+.el-dialog__title {
+    font-weight: 600 !important;
+}
+
+/* 全局动画效果 */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease !important;
+}
+
+.fade-enter, .fade-leave-to {
+    opacity: 0 !important;
+}
+
+/* 新增 - 气泡通知动画 */
+.el-notification {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+}
+
+.el-notification.right {
+    animation: slideInRight 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* 新增 - 加载中动画 */
+.el-loading-spinner .path {
+    stroke: var(--primary-color) !important;
+    stroke-width: 3px !important;
+}
+
+/* 新增 - 滚动条美化 */
+.content-section::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.content-section::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 3px;
+}
+
+.content-section::-webkit-scrollbar-thumb {
+    background: rgba(79, 172, 254, 0.2);
+    border-radius: 3px;
+}
+
+.content-section::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 172, 254, 0.4);
+}
+
+/* 新增 - 深色模式下的优化（如果你的应用支持深色模式） */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #e0e0e0;
+        --border-color: #333;
+    }
+} 

@@ -1,0 +1,81 @@
+# Git相关
+.git
+.gitignore
+.gitattributes
+
+# Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+env/
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+logs/*.log
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 测试文件
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# 备份配置
+config_backup/
+config/OAI_CONFIG_LIST
+config/OAI_CONFIG_LIST.*
+!config/OAI_CONFIG_LIST.example
+
+# 输出文件（可选，如果需要持久化可以移除这些）
+outputs/html/*
+outputs/raw/*
+outputs/image_prd/*
+
+# 上传文件（运行时生成）
+uploads/*
+
+# 数据库文件（如果使用外部数据库）
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker相关
+.dockerignore
+
+# 其他
+node_modules/
+npm-debug.log*

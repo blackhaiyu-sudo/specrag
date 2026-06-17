@@ -1,0 +1,265 @@
+/**
+ * 需求模块样式
+ */
+
+.requirement-module-component {
+    padding: 20px;
+}
+
+.requirement-module-component .card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ========== 列表视图 ========== */
+.module-list-view .el-table {
+    cursor: pointer;
+}
+
+.module-list-view .el-table__row:hover {
+    background-color: #f5f7fa;
+}
+
+.module-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.module-name-cell i {
+    color: #409EFF;
+    font-size: 16px;
+}
+
+/* ========== 创建视图 ========== */
+/* 确保创建视图可以滚动 */
+.module-create-view .box-card {
+    max-height: calc(100vh - 150px);
+    display: flex;
+    flex-direction: column;
+}
+
+.module-create-view .el-card__body {
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 40px;
+}
+
+/* 单页面模式的表单分区 */
+.module-create-view.single-page .form-section {
+    margin-bottom: 40px;
+    padding: 25px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e4e7ed;
+}
+
+.module-create-view .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #303133;
+    border-bottom: 2px solid #409EFF;
+    padding-bottom: 10px;
+}
+
+.module-create-view .step-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #303133;
+}
+
+.module-create-view .required {
+    color: #F56C6C;
+}
+
+.module-create-view .form-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #dcdfe6;
+    text-align: right;
+}
+
+.module-create-view .form-footer .el-button {
+    min-width: 120px;
+}
+
+/* 已上传图片展示 */
+.uploaded-images-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f5f7fa;
+    border-radius: 4px;
+}
+
+.uploaded-images-section h4 {
+    font-size: 14px;
+    color: #303133;
+    margin-bottom: 15px;
+}
+
+/* ========== 图片画廊 ========== */
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.image-item {
+    position: relative;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fff;
+    transition: all 0.3s;
+}
+
+.image-item:hover {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.image-thumbnail {
+    width: 100%;
+    height: 140px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    background-color: #f5f7fa;
+}
+
+.image-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.image-thumbnail:hover .image-overlay {
+    opacity: 1;
+}
+
+.image-overlay i {
+    font-size: 30px;
+    color: #fff;
+}
+
+.image-info {
+    margin-top: 8px;
+}
+
+.image-name {
+    font-size: 13px;
+    color: #303133;
+    font-weight: 500;
+    word-break: break-all;
+    white-space: normal;
+    line-height: 1.4;
+    min-height: 18px;
+}
+
+.image-size {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 4px;
+}
+
+.image-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* 确保按钮大小一致 */
+.image-actions .el-button {
+    min-width: 60px;
+}
+
+/* ========== 详情视图 ========== */
+.module-detail-view .section {
+    margin-top: 30px;
+}
+
+.module-detail-view .section h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-left: 4px solid #409EFF;
+    padding-left: 10px;
+}
+
+.module-detail-view .notes-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: inherit;
+    margin: 0;
+    color: #606266;
+    line-height: 1.6;
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 768px) {
+    .image-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+/* ========== 动画效果 ========== */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* 抽屉样式优化 */
+.el-drawer__wrapper {
+    z-index: 2000;
+}
+
+.el-drawer {
+    background-color: #f5f7fa;
+}
+
+.el-drawer__header {
+    margin-bottom: 0;
+    padding: 20px 20px 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border-bottom: none;
+}
+
+.el-drawer__title {
+    color: white !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+.el-drawer__body {
+    padding: 0;
+    overflow-y: auto;
+    background-color: #f5f7fa;
+}
+

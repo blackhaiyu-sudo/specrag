@@ -1,0 +1,1 @@
+(function(g){g.VueCuteTimeline={install:function(Vue){Vue.component("Timeline",{template:"<div class=\\"timeline\\\"><slot></slot></div>"});Vue.component("TimelineItem",{template:"<div class=\\"timeline-item\\\"><slot name=\\"others\\\"></slot><slot></slot></div>"});Vue.component("TimelineTitle",{template:"<div class=\\"timeline-title\\\"><slot></slot></div>"});}};})(window);

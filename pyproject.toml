@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "specrag"
+version = "0.1.0"
+description = "Evidence-grounded knowledge-base import and QA service for business documents"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools]
+packages = [
+    "agents",
+    "agents.qa_agents",
+    "agents.qa_agents.templates",
+    "config",
+    "database",
+    "database.migrations",
+    "routes",
+    "services",
+    "services.generation",
+    "services.kb",
+    "services.kb.storage",
+    "services.prd",
+    "services.requirement_modules",
+    "services.utils",
+    "utils",
+]

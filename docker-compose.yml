@@ -1,0 +1,81 @@
+name: specrag
+
+services:
+  kb-postgres:
+    image: postgres:16-alpine
+    container_name: specrag-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${KB_POSTGRES_DB:-specrag}
+      POSTGRES_USER: ${KB_POSTGRES_USER:-specrag}
+      POSTGRES_PASSWORD: ${KB_POSTGRES_PASSWORD:-specrag_dev}
+    ports:
+      - "${KB_POSTGRES_PORT:-15432}:5432"
+    volumes:
+      - kb_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${KB_POSTGRES_USER:-specrag} -d ${KB_POSTGRES_DB:-specrag}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kb-qdrant:
+    image: qdrant/qdrant:v1.12.6
+    container_name: specrag-qdrant
+    restart: unless-stopped
+    ports:
+      - "${KB_QDRANT_HTTP_PORT:-6333}:6333"
+      - "${KB_QDRANT_GRPC_PORT:-6334}:6334"
+    volumes:
+      - kb_qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ': >/dev/tcp/127.0.0.1/6333'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  specrag:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: specrag-app
+    restart: unless-stopped
+    depends_on:
+      kb-postgres:
+        condition: service_healthy
+      kb-qdrant:
+        condition: service_healthy
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=production
+      - KB_STORAGE_MODE=enterprise
+      - KB_TENANT_ID=${KB_TENANT_ID:-default}
+      - KB_POSTGRES_DSN=postgresql://${KB_POSTGRES_USER:-specrag}:${KB_POSTGRES_PASSWORD:-specrag_dev}@kb-postgres:5432/${KB_POSTGRES_DB:-specrag}
+      - KB_QDRANT_URL=http://kb-qdrant:6333
+      - KB_QDRANT_COLLECTION=${KB_QDRANT_COLLECTION:-specrag_units}
+      - LOG_DIR=/app/logs
+      - UPLOAD_FOLDER=/app/uploads
+      - AUTOGEN_CONFIG_PATH=/app/config/OAI_CONFIG_LIST
+    volumes:
+      # 持久化数据目录（macOS兼容）
+      # 数据库文件：存储业务文档、图片模块和本地知识库数据
+      - ~/docker-data/specrag/data:/app/data
+      # 用户上传的原始业务文档和图片
+      - ~/docker-data/specrag/uploads:/app/uploads
+      # 输出文件：图片分析、源文档整合和导入产物
+      - ~/docker-data/specrag/outputs:/app/outputs
+      # 日志文件：应用运行日志、对话记录等
+      - ~/docker-data/specrag/logs:/app/logs
+      # 模型配置：请先在本地创建 config/OAI_CONFIG_LIST
+      - ./config/OAI_CONFIG_LIST:/app/config/OAI_CONFIG_LIST:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  kb_postgres_data:
+  kb_qdrant_data:

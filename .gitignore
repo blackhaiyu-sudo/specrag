@@ -1,0 +1,172 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+runtime/
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Claude specific
+.claude/
+.cache/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Log files
+logs/
+*.log
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.bak
+*.backup
+*.old
+
+# Uploads directory (if contains sensitive data)
+uploads/
+
+# Output directory
+outputs/
+
+# PyCache specific
+*/__pycache__/
+**/__pycache__/
+中国市场客户信息整合实施指南.md
+AI在关系型toB_toG业务中的介入机会.md
+
+# local llm config (do not commit)
+config/OAI_CONFIG_LIST
+config/OAI_CONFIG_LIST.backup
+config/OAI_CONFIG_LIST.bak
+config/OAI_CONFIG_LIST.old
+config/OAI_CONFIG_LIST.plaintext*
+config/OAI_CONFIG_LIST.broken*
+config/OAI_CONFIG_LIST.encrypted
+
+# 环境变量文件（包含密钥，不提交）
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Prompt backups
+agents/qa_agents/templates_original_backup/
+agents/qa_agents/templates_backup/
+agents/qa_agents/templates_protected/
+protected_templates/
+*.core

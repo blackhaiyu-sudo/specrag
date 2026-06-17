@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库工作台</title>
+    <link rel="stylesheet" href="/static/libs/element-ui.css">
+    <link rel="stylesheet" href="/static/text_prd_manager.css">
+    <link rel="stylesheet" href="/static/requirement_module.css">
+    <link rel="stylesheet" href="/static/kb_workspace.css">
+</head>
+<body>
+    <div id="kb-app" v-cloak>
+        <el-container class="app-shell">
+            <el-aside width="232px" class="sidebar">
+                <div class="brand">
+                    <div class="brand-mark">KB</div>
+                    <div>
+                        <div class="brand-title">知识库工作台</div>
+                        <div class="brand-subtitle">导入与问答测试</div>
+                    </div>
+                </div>
+                <el-menu :default-active="activeView" class="side-menu" @select="activeView = $event">
+                    <el-menu-item index="overview">
+                        <i class="el-icon-data-analysis"></i>
+                        <span slot="title">总览</span>
+                    </el-menu-item>
+                    <el-menu-item index="import">
+                        <i class="el-icon-upload2"></i>
+                        <span slot="title">导入知识</span>
+                    </el-menu-item>
+                    <el-menu-item index="documents">
+                        <i class="el-icon-document"></i>
+                        <span slot="title">文档管理</span>
+                    </el-menu-item>
+                    <el-menu-item index="ask">
+                        <i class="el-icon-chat-line-square"></i>
+                        <span slot="title">问答测试</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-aside>
+
+            <el-container>
+                <el-header height="64px" class="topbar">
+                    <div>
+                        <div class="page-title">{%raw%}{{ viewTitle }}{%endraw%}</div>
+                        <div class="page-subtitle">{%raw%}{{ viewSubtitle }}{%endraw%}</div>
+                    </div>
+                    <div class="top-actions">
+                        <el-button icon="el-icon-refresh" size="small" @click="refreshAll">刷新</el-button>
+                        <el-tag type="success" size="small">MCP Agent</el-tag>
+                    </div>
+                </el-header>
+
+                <el-main class="main">
+                    <section v-if="activeView === 'overview'" class="view">
+                        <el-row :gutter="12" class="metric-row">
+                            <el-col :span="8" v-for="item in metrics" :key="item.label">
+                                <div class="metric">
+                                    <div class="metric-label">{%raw%}{{ item.label }}{%endraw%}</div>
+                                    <div class="metric-value">{%raw%}{{ item.value }}{%endraw%}</div>
+                                </div>
+                            </el-col>
+                        </el-row>
+                        <div class="flow-row">
+                            <div class="flow-card" @click="activeView = 'import'">
+                                <div class="flow-step">1</div>
+                                <div>
+                                    <div class="flow-title">导入知识</div>
+                                    <div class="flow-desc">从图片、PRD 或业务文档生成结构化知识单元并写入向量库</div>
+                                </div>
+                                <i class="el-icon-arrow-right flow-icon"></i>
+                            </div>
+                            <div class="flow-card" @click="activeView = 'ask'">
+                                <div class="flow-step">2</div>
+                                <div>
+                                    <div class="flow-title">问答测试</div>
+                                    <div class="flow-desc">验证召回、证据判断、答案整合和 no-answer 表现</div>
+                                </div>
+                                <i class="el-icon-arrow-right flow-icon"></i>
+                            </div>
+                        </div>
+                        <el-row :gutter="16">
+                            <el-col :span="14">
+                                <el-card shadow="never">
+                                    <div slot="header" class="card-header">
+                                        <span>最近文档</span>
+                                        <el-button type="text" @click="activeView = 'documents'">查看全部</el-button>
+                                    </div>
+                                    <div v-if="documents.length === 0" class="empty-line">暂无文档，先导入文本 PRD 或图片需求。</div>
+                                    <div v-for="doc in documents.slice(0, 6)" :key="doc.doc_id" class="doc-row" @click="selectDocument(doc)">
+                                        <div>
+                                            <div class="row-title">{%raw%}{{ doc.title }}{%endraw%}</div>
+                                            <div class="row-meta">{%raw%}{{ doc.product || '-' }} / {{ doc.module || '-' }} / {{ doc.version || '-' }}{%endraw%}</div>
+                                        </div>
+                                        <div class="row-count">units {%raw%}{{ doc.unit_count || 0 }}{%endraw%}</div>
+                                    </div>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-card shadow="never">
+                                    <div slot="header" class="card-header">
+                                        <span>快速测试</span>
+                                    </div>
+                                    <el-button class="quick-button" @click="setQuestion('这个功能的入口在哪里？')">这个功能的入口在哪里</el-button>
+                                    <el-button class="quick-button" @click="setQuestion('这个功能有哪些边界限制？')">这个功能有哪些边界限制</el-button>
+                                    <el-button class="quick-button" @click="setQuestion('异常情况下系统会怎么提示？')">异常情况下系统会怎么提示</el-button>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                    </section>
+
+                    <section v-if="activeView === 'import'" class="view">
+                        <el-card shadow="never">
+                            <div slot="header" class="card-header">
+                                <span>导入知识</span>
+                                <span class="muted">图片、PRD 和业务文档都会先转成结构化知识单元，再写入向量库</span>
+                            </div>
+                            <el-tabs v-model="importMode">
+                                <el-tab-pane label="新建图片需求" name="createImage" lazy>
+                                    <requirement-module-component initial-view="create" @back-to-parent="refreshAll"></requirement-module-component>
+                                </el-tab-pane>
+
+                                <el-tab-pane label="图片需求列表" name="imageList" lazy>
+                                    <requirement-module-component ref="imageModuleComponent" initial-view="list" @back-to-parent="refreshAll"></requirement-module-component>
+                                </el-tab-pane>
+
+                                <el-tab-pane label="新建文本 PRD" name="createText" lazy>
+                                    <text-prd-manager initial-view="create" @back-to-parent="refreshAll"></text-prd-manager>
+                                </el-tab-pane>
+
+                                <el-tab-pane label="文本 PRD 列表" name="textList" lazy>
+                                    <text-prd-manager ref="textPRDManager" initial-view="list" @back-to-parent="refreshAll"></text-prd-manager>
+                                </el-tab-pane>
+                            </el-tabs>
+                            <pre v-if="importResult" class="json-box">{%raw%}{{ formatJson(importResult) }}{%endraw%}</pre>
+                        </el-card>
+                    </section>
+
+                    <section v-if="activeView === 'documents'" class="view split-view">
+                        <el-card shadow="never" class="left-panel">
+                            <div slot="header" class="card-header">
+                                <span>文档列表</span>
+                                <el-button type="text" icon="el-icon-refresh" @click="loadDocuments">刷新</el-button>
+                            </div>
+                            <div v-if="documents.length === 0" class="empty-line">暂无文档。</div>
+                            <div v-for="doc in documents" :key="doc.doc_id" :class="['doc-row', selectedDoc && selectedDoc.doc_id === doc.doc_id ? 'active' : '']" @click="selectDocument(doc)">
+                                <div>
+                                    <div class="row-title">{%raw%}{{ doc.title }}{%endraw%}</div>
+                                    <div class="row-meta">{%raw%}{{ doc.doc_id }}{%endraw%}</div>
+                                </div>
+                                <div class="row-count">{%raw%}{{ doc.unit_count || 0 }}{%endraw%}</div>
+                            </div>
+                        </el-card>
+                        <el-card shadow="never" class="right-panel">
+                            <div slot="header" class="card-header">
+                                <span>知识单元</span>
+                                <span v-if="selectedDoc" class="muted">{%raw%}{{ selectedDoc.title }}{%endraw%}</span>
+                            </div>
+                            <div v-if="units.length === 0" class="empty-line">选择左侧文档后查看知识单元。</div>
+                            <div v-for="unit in units" :key="unit.unit_id" class="unit-row">
+                                <div class="unit-title">{%raw%}{{ unit.unit_id }} {{ unit.title }}{%endraw%}</div>
+                                <div class="unit-content">{%raw%}{{ unit.content }}{%endraw%}</div>
+                            </div>
+                        </el-card>
+                    </section>
+
+                    <section v-if="activeView === 'ask'" class="view">
+                        <el-card shadow="never" class="query-card">
+                            <div slot="header" class="card-header">
+                                <span>问答测试</span>
+                                <el-tag size="mini">MCP Agent</el-tag>
+                            </div>
+                            <div class="ask-editor">
+                                <el-input
+                                    v-model="askForm.question"
+                                    type="textarea"
+                                    :rows="4"
+                                    resize="vertical"
+                                    clearable
+                                    placeholder="输入要验证的业务问题，例如：这个功能有哪些边界限制？"
+                                    @keyup.enter.native.ctrl="ask">
+                                </el-input>
+                                <div class="ask-actions">
+                                    <div class="ask-option">
+                                        <span class="option-label">召回数量提示</span>
+                                        <el-input-number v-model="askForm.topK" :min="1" :max="10" size="small"></el-input-number>
+                                    </div>
+                                    <el-button type="primary" icon="el-icon-chat-line-square" :loading="loading.asking" @click="ask">
+                                        {%raw%}{{ loading.asking ? '回答中' : '提问' }}{%endraw%}
+                                    </el-button>
+                                </div>
+                            </div>
+                            <div class="hint-line">系统会自动检索知识库、判断证据是否足够，并在证据不足时拒绝推断。</div>
+                        </el-card>
+
+                        <el-card v-if="answer" shadow="never" class="answer-card">
+                            <div slot="header" class="card-header">
+                                <span>回答结果</span>
+                                <el-tag :type="answer.answerable ? 'success' : 'warning'">{%raw%}{{ answer.answerable ? '可回答' : '证据不足' }}{%endraw%}</el-tag>
+                            </div>
+                            <div v-if="answer.audit_id || answer.model || answer.duration_seconds" class="answer-meta">
+                                <span v-if="answer.audit_id">audit_id: {%raw%}{{ answer.audit_id }}{%endraw%}</span>
+                                <span v-if="answer.model">model: {%raw%}{{ answer.model }}{%endraw%}</span>
+                            </div>
+                            <div class="usage-panel">
+                                <div class="usage-item">
+                                    <div class="usage-label">总耗时</div>
+                                    <div class="usage-value">{%raw%}{{ formatSeconds(answerDuration(answer)) }}{%endraw%}</div>
+                                </div>
+                                <div class="usage-item">
+                                    <div class="usage-label">总 Token</div>
+                                    <div class="usage-value">{%raw%}{{ formatNumber(tokenValue(answer, 'total_tokens')) }}{%endraw%}</div>
+                                </div>
+                                <div class="usage-item">
+                                    <div class="usage-label">Prompt</div>
+                                    <div class="usage-value">{%raw%}{{ formatNumber(tokenValue(answer, 'prompt_tokens')) }}{%endraw%}</div>
+                                </div>
+                                <div class="usage-item">
+                                    <div class="usage-label">Completion</div>
+                                    <div class="usage-value">{%raw%}{{ formatNumber(tokenValue(answer, 'completion_tokens')) }}{%endraw%}</div>
+                                </div>
+                                <div class="usage-item">
+                                    <div class="usage-label">模型调用</div>
+                                    <div class="usage-value">{%raw%}{{ usageValue(answer, 'model_call_count') }}{%endraw%}</div>
+                                </div>
+                                <div class="usage-item">
+                                    <div class="usage-label">MCP 工具</div>
+                                    <div class="usage-value">{%raw%}{{ usageValue(answer, 'tool_call_count') }}{%endraw%}</div>
+                                </div>
+                            </div>
+                            <div class="usage-subline">
+                                <span>LLM耗时 {%raw%}{{ formatSeconds(usageValue(answer, 'llm_duration_seconds')) }}{%endraw%}</span>
+                                <span>工具耗时 {%raw%}{{ formatSeconds(usageValue(answer, 'tool_duration_seconds')) }}{%endraw%}</span>
+                                <span>Reasoning {%raw%}{{ formatNumber(tokenValue(answer, 'reasoning_tokens')) }}{%endraw%}</span>
+                                <span>Cached {%raw%}{{ formatNumber(tokenValue(answer, 'cached_tokens')) }}{%endraw%}</span>
+                            </div>
+                            <div class="answer-text">{%raw%}{{ answer.answer }}{%endraw%}</div>
+                            <el-collapse>
+                                <el-collapse-item v-if="answer.answerability" title="Judge 详情" name="judge">
+                                    <pre class="json-box">{%raw%}{{ formatJson(answer.answerability) }}{%endraw%}</pre>
+                                </el-collapse-item>
+                                <el-collapse-item v-if="answer.tool_trace" title="MCP Tool Trace" name="trace">
+                                    <pre class="json-box">{%raw%}{{ formatJson(answer.tool_trace) }}{%endraw%}</pre>
+                                </el-collapse-item>
+                            </el-collapse>
+                        </el-card>
+                        <result-list :items="answerSources"></result-list>
+
+                        <el-card shadow="never" class="audit-card">
+                            <div slot="header" class="card-header">
+                                <span>最近 MCP Agent 审计</span>
+                                <el-button type="text" icon="el-icon-refresh" :loading="loading.audits" @click="loadAskAudits">刷新</el-button>
+                            </div>
+                            <div v-if="askAudits.length === 0" class="empty-line">暂无审计记录。</div>
+                            <div v-for="audit in askAudits" :key="audit.audit_id" class="audit-row">
+                                <div class="audit-top">
+                                    <div class="audit-question">{%raw%}{{ audit.question || '-' }}{%endraw%}</div>
+                                    <div class="audit-tags">
+                                        <el-tag size="mini" :type="audit.status === 'success' ? 'success' : 'danger'">{%raw%}{{ audit.status }}{%endraw%}</el-tag>
+                                        <el-tag size="mini" :type="audit.answerable ? 'success' : 'warning'">{%raw%}{{ audit.answerable ? '可回答' : '证据不足' }}{%endraw%}</el-tag>
+                                    </div>
+                                </div>
+                                <div class="audit-meta">
+                                    {%raw%}{{ audit.audit_id }} / {{ audit.created_at || '-' }} / {{ audit.duration_seconds || 0 }}s / {{ audit.model || '-' }}{%endraw%}
+                                </div>
+                                <div class="audit-stats">
+                                    <span>耗时 {%raw%}{{ formatSeconds(answerDuration(audit)) }}{%endraw%}</span>
+                                    <span>Token {%raw%}{{ formatNumber(tokenValue(audit, 'total_tokens')) }}{%endraw%}</span>
+                                    <span>模型 {%raw%}{{ usageValue(audit, 'model_call_count') }}{%endraw%}</span>
+                                    <span>工具 {%raw%}{{ usageValue(audit, 'tool_call_count') }}{%endraw%}</span>
+                                </div>
+                                <div class="audit-answer">{%raw%}{{ audit.answer || audit.error || '' }}{%endraw%}</div>
+                                <el-collapse>
+                                    <el-collapse-item title="真实 MCP Tool Trace" :name="'audit-trace-' + audit.audit_id">
+                                        <pre class="json-box">{%raw%}{{ formatJson(audit.backend_tool_trace || audit.tool_trace || []) }}{%endraw%}</pre>
+                                    </el-collapse-item>
+                                    <el-collapse-item v-if="audit.sources && audit.sources.length" title="来源" :name="'audit-sources-' + audit.audit_id">
+                                        <pre class="json-box">{%raw%}{{ formatJson(audit.sources) }}{%endraw%}</pre>
+                                    </el-collapse-item>
+                                </el-collapse>
+                            </div>
+                        </el-card>
+                    </section>
+
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
+
+    <script src="/static/libs/vue.min.js"></script>
+    <script src="/static/libs/element-ui.min.js"></script>
+    <script src="/static/libs/axios.min.js"></script>
+    <script src="/static/libs/marked.min.js"></script>
+    <script src="/static/text_prd_manager.js"></script>
+    <script src="/static/requirement_module.js?v=20260613-1"></script>
+    <script src="/static/kb_workspace.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+/* 文本PRD管理组件样式 */
+
+.text-prd-manager {
+    padding: 0;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #303133;
+}
+
+/* 过滤器 */
+.filter-bar {
+    padding: 10px 0;
+    border-bottom: 1px solid #EBEEF5;
+}
+
+/* 详情页内容区 */
+.prd-detail-content {
+    padding: 10px 0;
+}
+
+.config-section,
+.content-section {
+    margin-bottom: 30px;
+}
+
+.config-section h3,
+.content-section h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #303133;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #409EFF;
+}
+
+/* Markdown内容显示 */
+.content-display {
+    border: 1px solid #DCDFE6;
+    border-radius: 4px;
+    padding: 20px;
+    background: #FAFAFA;
+    max-height: calc(100vh - 450px); /* 动态计算，根据视窗高度调整，至少留出450px给其他内容 */
+    min-height: 400px; /* 最小高度确保可读性 */
+    overflow-y: auto;
+    /* 美化滚动条 */
+    scrollbar-width: thin;
+    scrollbar-color: #409EFF #E4E7ED;
+}
+
+/* Webkit浏览器滚动条美化 */
+.content-display::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-display::-webkit-scrollbar-track {
+    background: #E4E7ED;
+    border-radius: 4px;
+}
+
+.content-display::-webkit-scrollbar-thumb {
+    background: #409EFF;
+    border-radius: 4px;
+}
+
+.content-display::-webkit-scrollbar-thumb:hover {
+    background: #66b1ff;
+}
+
+.markdown-content {
+    line-height: 1.8;
+    color: #303133;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.markdown-content code {
+    background: #F5F7FA;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+.markdown-content pre {
+    background: #F5F7FA;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+/* 内容编辑 */
+.content-edit textarea {
+    font-family: 'Courier New', monospace;
+}
+
+/* 操作按钮区 */
+.action-bar {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #EBEEF5;
+    text-align: center;
+}
+
+.action-bar .el-button {
+    min-width: 150px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .action-bar .el-button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
