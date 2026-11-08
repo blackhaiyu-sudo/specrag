@@ -31,7 +31,7 @@ class Config:
         # 尝试加载配置
         if os.path.exists(config_path):
             try:
-                with open(config_path, 'r') as f:
+                with open(config_path, 'r', encoding="utf-8") as f:
                     config_list = json.load(f)
                 
                 logger.info(f"成功加载配置文件: {config_path}")
